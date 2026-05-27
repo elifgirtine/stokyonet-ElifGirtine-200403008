@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+
+    <!-- İstatistik Kartları -->
+    <div class="stats-row">
+        <div class="stat-card stat-gelir">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+                <span class="stat-label">Bu Ayki Gelir</span>
+                <span class="stat-value" id="stat-gelir">—</span>
+            </div>
+        </div>
+        <div class="stat-card stat-urun">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+                <span class="stat-label">Toplam Ürün</span>
+                <span class="stat-value" id="stat-urun">—</span>
+            </div>
+        </div>
+        <div class="stat-card stat-satis">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-info">
+                <span class="stat-label">Bugünkü Satış</span>
+                <span class="stat-value" id="stat-satis">—</span>
+            </div>
+        </div>
+        <div class="stat-card stat-kritik">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-info">
+                <span class="stat-label">Kritik Stok</span>
+                <span class="stat-value" id="stat-kritik">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hızlı Erişim -->
+    <div class="quick-access">
+        <h2 class="section-title">Hızlı İşlemler</h2>
+        <div class="quick-buttons">
+            <a href="{{ url_for('satis') }}" class="quick-btn quick-btn-primary">
+                <span>💳</span> Yeni Satış
+            </a>
+            <a href="{{ url_for('urunler') }}" class="quick-btn quick-btn-secondary">
+                <span>➕</span> Ürün Ekle
+            </a>
+            <a href="{{ url_for('raporlar') }}" class="quick-btn quick-btn-tertiary">
+                <span>📊</span> Rapor Görüntüle
+            </a>
+        </div>
+    </div>
+
+    <!-- Kritik Stok Uyarısı -->
+    <div class="kritik-stok-panel">
+        <h2 class="section-title">⚠️ Kritik Stok Uyarıları</h2>
+        <div id="kritik-stok-listesi">
+            <p class="empty-state">Veriler yükleniyor...</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

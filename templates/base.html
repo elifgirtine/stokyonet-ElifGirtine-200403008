@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Küçük işletmeniz için stok ve gelir yönetim sistemi.">
+    <title>{% block title %}Stok Takip{% endblock %} — StokYönet</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Ana CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% if session.kullanici_id %}
+<!-- ── Kenar Çubuğu ── -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <span class="brand-icon">📦</span>
+        <span class="brand-text">StokYönet</span>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="{{ url_for('dashboard') }}"
+           class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+            <span class="nav-icon">🏠</span>
+            <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('urunler') }}"
+           class="nav-item {% if request.endpoint == 'urunler' %}active{% endif %}">
+            <span class="nav-icon">🛍️</span>
+            <span>Ürünler</span>
+        </a>
+        <a href="{{ url_for('kategoriler') }}"
+           class="nav-item {% if request.endpoint == 'kategoriler' %}active{% endif %}">
+            <span class="nav-icon">🗂️</span>
+            <span>Kategoriler</span>
+        </a>
+        <a href="{{ url_for('satis') }}"
+           class="nav-item {% if request.endpoint == 'satis' %}active{% endif %}">
+            <span class="nav-icon">💳</span>
+            <span>Satış Yap</span>
+        </a>
+        <a href="{{ url_for('raporlar') }}"
+           class="nav-item {% if request.endpoint == 'raporlar' %}active{% endif %}">
+            <span class="nav-icon">📊</span>
+            <span>Raporlar</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <span class="user-badge">👤 {{ session.get('kullanici_adi', 'Kullanıcı') }}</span>
+        <a href="{{ url_for('cikis') }}" class="btn-cikis">Çıkış</a>
+    </div>
+</aside>
+
+<!-- ── Ana İçerik ── -->
+<div class="main-wrapper">
+    <header class="topbar">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Menüyü aç/kapat">☰</button>
+        <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+    </header>
+
+    <main class="content">
+{% endif %}
+
+        <!-- Flash Mesajları -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}" role="alert">
+                            <span>{{ message }}</span>
+                            <button class="flash-close" onclick="this.parentElement.remove()">✕</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+
+{% if session.kullanici_id %}
+    </main>
+</div>
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
