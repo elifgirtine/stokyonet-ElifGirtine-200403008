@@ -1,0 +1,20 @@
+# Sanal ortam
+venv/
+
+# Python derleme dosyaları
+__pycache__/
+*.pyc
+
+# Ortam değişkenleri (asla GitHub'a yükleme!)
+.env
+
+# Firebase servis hesabı (asla GitHub'a yükleme!)
+serviceAccountKey.json
+*.json
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
