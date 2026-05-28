@@ -4,6 +4,31 @@ Küçük işletmeler için geliştirilmiş, Flask + Firebase Firestore tabanlı 
 
 ---
 
+## 🚀 Hızlı Başlangıç
+
+### Gereksinimler
+- Python 3.9+
+- Firebase servis hesabı JSON dosyası
+
+### Kurulum (Tek Komut)
+```bash
+python kurulum.py
+```
+
+Kurulum scripti tüm adımları otomatik halleder.
+Sadece Firebase JSON dosyanızın yolunu girmeniz yeterli.
+
+### Uygulamayı Başlat
+```bash
+python app.py
+```
+
+Tarayıcıda açın: http://localhost:5001
+
+**Varsayılan Giriş:** admin / Admin123!
+
+---
+
 ## 🚀 Özellikler
 
 - 🔐 Güvenli kullanıcı girişi (bcrypt ile şifre hashleme)

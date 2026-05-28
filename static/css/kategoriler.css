@@ -1,0 +1,282 @@
+/* ═══════════════════════════════════════════════════
+   kategoriler.css — Kategori Yönetimi Sayfasına Özel
+   ═══════════════════════════════════════════════════ */
+
+/* ── Sayfa Wrapper ── */
+.kat-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ── Başlık Satırı ── */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.page-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.table-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.urun-sayisi {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.btn-yeni {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+}
+
+.btn-yeni:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(44, 95, 45, 0.35);
+}
+
+/* ── Kategori Kartları Grid ── */
+.kat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+}
+
+/* ── Tekil Kart ── */
+.kat-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.kat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+/* Renkli Üst Bant */
+.kat-bant {
+    height: 6px;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+/* Kart İçeriği */
+.kat-icerik {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem 1rem;
+    text-align: center;
+    gap: 0.4rem;
+}
+
+.kat-emoji {
+    font-size: 2.4rem;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.kat-ad {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    word-break: break-word;
+    line-height: 1.3;
+}
+
+.kat-urun-badge {
+    display: inline-block;
+    background: #f1f5f9;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.7rem;
+    border-radius: 99px;
+    margin-top: 0.1rem;
+}
+
+/* Kart Alt Aksiyon Butonları */
+.kat-actions {
+    display: flex;
+    border-top: 1px solid var(--border);
+}
+
+.kat-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.6rem 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    text-decoration: none;
+    transition: background var(--transition), color var(--transition);
+}
+
+.kat-btn + .kat-btn,
+.kat-btn + form,
+form + .kat-btn {
+    border-left: 1px solid var(--border);
+}
+
+.kat-btn-duzenle {
+    color: var(--text-secondary);
+}
+
+.kat-btn-duzenle:hover {
+    background: #f1f5f9;
+    color: var(--text-primary);
+}
+
+.kat-btn-sil {
+    color: var(--danger);
+}
+
+.kat-btn-sil:hover {
+    background: #fee2e2;
+}
+
+/* Silme formu düzgün flex eleman olsun */
+.kat-actions form {
+    flex: 1;
+    display: flex;
+    border-left: 1px solid var(--border);
+}
+
+.kat-actions form .kat-btn {
+    width: 100%;
+    border-left: none;
+}
+
+/* ── Boş Durum ── */
+.empty-state-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 5rem 2rem;
+    text-align: center;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-secondary);
+}
+
+.empty-icon { font-size: 3.5rem; }
+.empty-state-box h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); }
+.empty-state-box p  { font-size: 0.9rem; color: var(--text-muted); }
+
+/* ════════════════════════════════════════════════════
+   FORM SAYFASI (kategori_form.html)
+   ════════════════════════════════════════════════════ */
+.form-page-wrapper {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.form-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+    color: #fff;
+}
+
+.form-card-icon { font-size: 2rem; line-height: 1; }
+
+.form-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.2rem;
+}
+
+.form-card-subtitle {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.75);
+}
+
+.form-body {
+    padding: 1.75rem 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-hint {
+    display: block;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}
+
+.required { color: var(--danger); margin-left: 2px; }
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.btn-secondary {
+    background: var(--bg);
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border);
+}
+
+.btn-secondary:hover {
+    background: var(--border);
+    color: var(--text-primary);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+    .kat-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .kat-grid { grid-template-columns: repeat(2, 1fr); }
+    .page-header { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+    .kat-grid { grid-template-columns: 1fr; }
+    .form-card-header,
+    .form-body { padding: 1.25rem; }
+}

@@ -8,34 +8,46 @@
 
     <!-- İstatistik Kartları -->
     <div class="stats-row">
+
         <div class="stat-card stat-gelir">
             <div class="stat-icon">💰</div>
             <div class="stat-info">
                 <span class="stat-label">Bu Ayki Gelir</span>
-                <span class="stat-value" id="stat-gelir">—</span>
+                <span class="stat-value" id="stat-gelir">
+                    ₺{{ "%.2f"|format(aylik_gelir) }}
+                </span>
             </div>
         </div>
+
         <div class="stat-card stat-urun">
             <div class="stat-icon">📦</div>
             <div class="stat-info">
                 <span class="stat-label">Toplam Ürün</span>
-                <span class="stat-value" id="stat-urun">—</span>
+                <span class="stat-value" id="stat-urun">{{ toplam_urun }}</span>
             </div>
         </div>
+
         <div class="stat-card stat-satis">
             <div class="stat-icon">🛒</div>
             <div class="stat-info">
                 <span class="stat-label">Bugünkü Satış</span>
-                <span class="stat-value" id="stat-satis">—</span>
+                <span class="stat-value" id="stat-satis">
+                    {{ bugunku_satis_adedi }} işlem
+                </span>
+                {% if bugunku_satis_tutari > 0 %}
+                <span class="stat-sub">₺{{ "%.2f"|format(bugunku_satis_tutari) }}</span>
+                {% endif %}
             </div>
         </div>
-        <div class="stat-card stat-kritik">
+
+        <div class="stat-card {% if kritik_stok_sayisi > 0 %}stat-kritik-aktif{% else %}stat-kritik{% endif %}">
             <div class="stat-icon">⚠️</div>
             <div class="stat-info">
                 <span class="stat-label">Kritik Stok</span>
-                <span class="stat-value" id="stat-kritik">—</span>
+                <span class="stat-value" id="stat-kritik">{{ kritik_stok_sayisi }} ürün</span>
             </div>
         </div>
+
     </div>
 
     <!-- Hızlı Erişim -->
@@ -58,7 +70,34 @@
     <div class="kritik-stok-panel">
         <h2 class="section-title">⚠️ Kritik Stok Uyarıları</h2>
         <div id="kritik-stok-listesi">
-            <p class="empty-state">Veriler yükleniyor...</p>
+            {% if kritik_urunler %}
+                <table class="kritik-stok-tablo">
+                    <thead>
+                        <tr>
+                            <th>Ürün Adı</th>
+                            <th>Mevcut Stok</th>
+                            <th>Kritik Seviye</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for urun in kritik_urunler %}
+                        <tr class="kritik-stok-satir">
+                            <td>{{ urun.ad }}</td>
+                            <td class="stok-sayi kritik">{{ urun.stok }}</td>
+                            <td class="stok-sayi">{{ urun.kritik }}</td>
+                            <td>
+                                <span class="badge badge-kritik">
+                                    {% if urun.stok == 0 %}Tükendi{% else %}Kritik{% endif %}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty-state succes-state">✅ Tüm ürünler yeterli stok seviyesinde.</p>
+            {% endif %}
         </div>
     </div>
 

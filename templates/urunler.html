@@ -1,11 +1,137 @@
 {% extends "base.html" %}
-{% block title %}Ürünler{% endblock %}
-{% block page_title %}Ürünler{% endblock %}
+
+{% block title %}Ürün Yönetimi{% endblock %}
+{% block page_title %}Ürün Yönetimi{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/urunler.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="page-placeholder">
-    <span class="placeholder-icon">🛍️</span>
-    <h2>Ürün Yönetimi</h2>
-    <p>Bu sayfa yakında aktif olacak.</p>
-    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Dashboard'a Dön</a>
+<div class="urunler-wrapper">
+
+    <!-- Başlık Satırı -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h2 class="table-title">Ürün Listesi</h2>
+            <span class="urun-sayisi">{{ urunler|length }} ürün kayıtlı</span>
+        </div>
+        <a href="{{ url_for('urun_ekle') }}" class="btn btn-primary btn-yeni-urun" id="btn-yeni-urun">
+            ＋ Yeni Ürün Ekle
+        </a>
+    </div>
+
+    {% if urunler %}
+    <!-- Filtre Çubuğu -->
+    <div class="filter-bar" id="filter-bar">
+        <input
+            type="text"
+            id="arama-input"
+            class="filter-input"
+            placeholder="🔍 Ürün adı ara..."
+            autocomplete="off"
+        >
+        <select id="kategori-filtre" class="filter-select">
+            <option value="">Tüm Kategoriler</option>
+            {% for kat in kategoriler %}
+            <option value="{{ kat.id }}">{{ kat.ad }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Ürün Tablosu -->
+    <div class="table-wrapper">
+        <table class="product-table" id="urun-tablosu">
+            <thead>
+                <tr>
+                    <th>Ürün Adı</th>
+                    <th>Kategori</th>
+                    <th>Alış Fiyatı</th>
+                    <th>Satış Fiyatı</th>
+                    <th>Kâr Marjı</th>
+                    <th>Stok</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for urun in urunler %}
+                <tr
+                    class="urun-satiri
+                        {% if urun.stok_durum == 'tukendi' %} table-row-empty
+                        {% elif urun.stok_durum == 'kritik' %} table-row-critical
+                        {% endif %}"
+                    data-ad="{{ urun.ad | lower }}"
+                    data-kategori="{{ urun.kategori_id }}"
+                >
+                    <td class="urun-adi">{{ urun.ad }}</td>
+                    <td>
+                        <span class="badge badge-kategori">{{ urun.kategori_ad }}</span>
+                    </td>
+                    <td class="fiyat-hucre">₺{{ "%.2f"|format(urun.alis_fiyati) }}</td>
+                    <td class="fiyat-hucre satis-fiyat">₺{{ "%.2f"|format(urun.satis_fiyati) }}</td>
+                    <td class="kar-hucre">
+                        <span class="kar-badge {% if urun.kar_marji >= 30 %}kar-iyi{% elif urun.kar_marji >= 15 %}kar-orta{% else %}kar-dusuk{% endif %}">
+                            %{{ urun.kar_marji }}
+                        </span>
+                    </td>
+                    <td class="stok-hucre">
+                        <span class="{% if urun.stok_miktari == 0 %}stok-sifir{% elif urun.stok_durum == 'kritik' %}stok-kritik{% endif %}">
+                            {{ urun.stok_miktari }} adet
+                        </span>
+                    </td>
+                    <td>
+                        {% if urun.stok_durum == 'tukendi' %}
+                            <span class="badge badge-danger">❌ Tükendi</span>
+                        {% elif urun.stok_durum == 'kritik' %}
+                            <span class="badge badge-warning">⚠️ Kritik</span>
+                        {% else %}
+                            <span class="badge badge-success">✅ Normal</span>
+                        {% endif %}
+                    </td>
+                    <td class="islem-hucre">
+                        <a href="{{ url_for('urun_duzenle', urun_id=urun.id) }}"
+                           class="icon-button icon-edit"
+                           title="Düzenle">
+                            🖋️
+                        </a>
+                        <form action="{{ url_for('urun_sil', urun_id=urun.id) }}"
+                              method="POST"
+                              class="sil-form"
+                              onsubmit="return silinsinMi(this, '{{ urun.ad }}')">
+                            <button type="submit"
+                                    class="icon-button icon-delete"
+                                    title="Sil">
+                                🗑️
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Filtrede hiç sonuç yoksa göster -->
+        <div class="no-results" id="no-results" style="display:none;">
+            <p>🔍 Aramanıza uygun ürün bulunamadı.</p>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Hiç Ürün Yoksa -->
+    <div class="empty-state-box" id="empty-state">
+        <span class="empty-icon">📦</span>
+        <h3>Henüz ürün yok</h3>
+        <p>İlk ürününü ekleyerek stok takibine başla.</p>
+        <a href="{{ url_for('urun_ekle') }}" class="btn btn-primary" id="btn-ilk-urun">
+            ＋ İlk Ürünü Ekle
+        </a>
+    </div>
+    {% endif %}
+
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/urunler.js') }}"></script>
 {% endblock %}

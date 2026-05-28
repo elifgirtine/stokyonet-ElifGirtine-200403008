@@ -1,11 +1,99 @@
 {% extends "base.html" %}
-{% block title %}Kategoriler{% endblock %}
-{% block page_title %}Kategoriler{% endblock %}
+{% block title %}Kategori Yönetimi{% endblock %}
+{% block page_title %}Kategori Yönetimi{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/kategoriler.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="page-placeholder">
-    <span class="placeholder-icon">🗂️</span>
-    <h2>Kategori Yönetimi</h2>
-    <p>Bu sayfa yakında aktif olacak.</p>
-    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Dashboard'a Dön</a>
+<div class="kat-wrapper">
+
+    <!-- Üst Başlık Satırı -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h2 class="table-title">Kategoriler</h2>
+            <span class="urun-sayisi">{{ kategoriler|length }} kategori kayıtlı</span>
+        </div>
+        <a href="{{ url_for('kategori_ekle') }}" class="btn btn-primary btn-yeni" id="btn-yeni-kategori">
+            ＋ Yeni Kategori Ekle
+        </a>
+    </div>
+
+    <!-- Kategori Kartları Grid -->
+    {% if kategoriler %}
+    <div class="kat-grid" id="kat-grid">
+        {% for kat in kategoriler %}
+        <div class="kat-card" id="kat-{{ kat.id }}">
+
+            <!-- Renkli Üst Bant — Python'da deterministik olarak hesaplanmış -->
+            <div class="kat-bant" style="background: {{ kat.renk }};"></div>
+
+            <!-- Kart İçeriği -->
+            <div class="kat-icerik">
+                <div class="kat-emoji">{{ kat.emoji }}</div>
+                <h3 class="kat-ad">{{ kat.ad }}</h3>
+                <span class="kat-urun-badge">
+                    {% if kat.urun_sayisi == 0 %}
+                        Ürün yok
+                    {% elif kat.urun_sayisi == 1 %}
+                        1 ürün
+                    {% else %}
+                        {{ kat.urun_sayisi }} ürün
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Alt Aksiyon Butonları -->
+            <div class="kat-actions">
+                <a href="{{ url_for('kategori_duzenle', kat_id=kat.id) }}"
+                   class="kat-btn kat-btn-duzenle" id="btn-duzenle-{{ kat.id }}">
+                    🖋️ Düzenle
+                </a>
+                <form action="{{ url_for('kategori_sil', kat_id=kat.id) }}"
+                      method="POST"
+                      onsubmit="return katSilOnay('{{ kat.ad }}', {{ kat.urun_sayisi }})">
+                    <button type="submit" class="kat-btn kat-btn-sil"
+                            id="btn-sil-{{ kat.id }}">
+                        🗑️ Sil
+                    </button>
+                </form>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Boş Durum -->
+    <div class="empty-state-box" id="empty-state">
+        <span class="empty-icon">🗂️</span>
+        <h3>Henüz kategori yok</h3>
+        <p>Ürünlerinizi gruplamak için kategori ekleyin.</p>
+        <a href="{{ url_for('kategori_ekle') }}" class="btn btn-primary" id="btn-ilk-kategori">
+            ＋ İlk Kategoriyi Ekle
+        </a>
+    </div>
+    {% endif %}
+
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/**
+ * Silme butonuna tıklandığında onay ister.
+ * Kategoride ürün varsa önce uyarır.
+ */
+function katSilOnay(ad, urunSayisi) {
+    if (urunSayisi > 0) {
+        alert(
+            `"${ad}" kategorisinde ${urunSayisi} aktif ürün bulunuyor.\n` +
+            `Silmeden önce ürünleri başka bir kategoriye taşıyın veya silin.`
+        );
+        return false;
+    }
+    return confirm(`"${ad}" kategorisini silmek istediğinize emin misiniz?`);
+}
+</script>
 {% endblock %}

@@ -1,11 +1,207 @@
 {% extends "base.html" %}
-{% block title %}Satış Yap{% endblock %}
-{% block page_title %}Satış Yap{% endblock %}
+
+{% block title %}Satış{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/satis.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="page-placeholder">
-    <span class="placeholder-icon">💳</span>
-    <h2>Satış İşlemi</h2>
-    <p>Bu sayfa yakında aktif olacak.</p>
-    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Dashboard'a Dön</a>
+<div class="page-header">
+    <h1 class="page-title">🛒 Satış Yap</h1>
+    <p class="page-subtitle">Ürün seç, sepete ekle, satışı tamamla</p>
 </div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in messages %}
+  <div class="alert alert-{{ cat }}">{{ msg }}</div>
+  {% endfor %}
+{% endwith %}
+
+<!-- Ürün verileri: JS tarafından okunacak -->
+<script id="urunler-data" type="application/json">
+{{ urunler | tojson | safe }}
+</script>
+
+<div class="satis-layout">
+
+    <!-- ══════════════════════════════════════
+         SOL SÜTUN — Ürün Seçimi
+    ══════════════════════════════════════ -->
+    <section class="urun-panel" aria-label="Ürün seçimi">
+
+        <div class="panel-baslik">
+            <h2 class="panel-h2">Ürün Seç</h2>
+            <span class="badge-mevcut" id="urun-sayac">{{ urunler|length }} ürün mevcut</span>
+        </div>
+
+        <!-- Kategori pill filtreleri -->
+        <div class="kategori-pills" id="kategori-pills" role="group" aria-label="Kategori filtreleri">
+            <button class="kategori-pill active"
+                    id="pill-tumü"
+                    data-kategori-id=""
+                    onclick="kategoriyeFiltrele('')">
+                Tümü
+            </button>
+            {% for kat in kategoriler %}
+            <button class="kategori-pill"
+                    id="pill-{{ kat.id }}"
+                    data-kategori-id="{{ kat.id }}"
+                    onclick="kategoriyeFiltrele('{{ kat.id }}')">
+                {{ kat.ad }}
+            </button>
+            {% endfor %}
+        </div>
+
+        <!-- Arama kutusu -->
+        <div class="arama-wrapper">
+            <span class="arama-icon">🔍</span>
+            <input type="text"
+                   id="urun-arama"
+                   class="urun-arama-input"
+                   placeholder="Ürün ara..."
+                   oninput="urunAra(this.value)"
+                   aria-label="Ürün ara">
+        </div>
+
+        <!-- Ürün kartları grid -->
+        {% if urunler %}
+        <div class="urun-grid" id="urun-grid">
+            {% for u in urunler %}
+            <div class="urun-card{% if u.kritik_stok %} stok-kritik-kart{% endif %}"
+                 id="kart-{{ u.id }}"
+                 data-kategori="{{ u.kategori_id }}"
+                 data-ad="{{ u.ad | lower }}"
+                 data-stok="{{ u.stok_miktari }}">
+
+                <div class="urun-kart-icerik">
+                    <div class="urun-kart-ust">
+                        <p class="urun-adi">{{ u.ad }}</p>
+                        <p class="urun-kategori">{{ u.kategori_adi }}</p>
+                    </div>
+
+                    <div class="urun-kart-orta">
+                        <p class="urun-fiyat">₺{{ "%.2f"|format(u.satis_fiyati) }}</p>
+                        <p class="urun-stok {% if u.kritik_stok %}stok-kritik-renk{% endif %}">
+                            {% if u.kritik_stok %}⚠️{% endif %}
+                            Stok: {{ u.stok_miktari }} adet
+                        </p>
+                    </div>
+                </div>
+
+                <button class="btn-sepete-ekle"
+                        id="btn-ekle-{{ u.id }}"
+                        onclick="urunEkle('{{ u.id }}')">
+                    + Sepete Ekle
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+
+        <p class="no-results-msg" id="no-results" style="display:none">
+            Arama kriterlerine uyan ürün bulunamadı.
+        </p>
+
+        {% else %}
+        <div class="bos-durum">
+            <p class="bos-icon">📦</p>
+            <p>Satışa sunulacak stoklu ürün bulunmuyor.</p>
+            <a href="{{ url_for('urunler') }}" class="btn-primary">Ürünleri Yönet</a>
+        </div>
+        {% endif %}
+
+    </section>
+
+    <!-- ══════════════════════════════════════
+         SAĞ SÜTUN — Sepet (sticky)
+    ══════════════════════════════════════ -->
+    <aside class="sepet-panel" id="sepet-panel" aria-label="Alışveriş sepeti">
+
+        <div class="sepet-baslik">
+            <span class="sepet-baslik-icon">🛒</span>
+            <div>
+                <h2 class="sepet-h2">Sepet</h2>
+                <p class="sepet-ozet-kucuk" id="sepet-ozet-kucuk">Boş</p>
+            </div>
+        </div>
+
+        <!-- Sepet içerik alanı -->
+        <div id="sepet-icerik">
+            <!-- JS tarafından render edilir -->
+        </div>
+
+        <!-- Özet + Tamamla butonu -->
+        <div class="ozet-bar" id="ozet-bar" style="display:none">
+            <div class="ozet-satirlar">
+                <div class="ozet-satir">
+                    <span>Ürün Sayısı</span>
+                    <span id="ozet-urun-sayisi">0</span>
+                </div>
+                <div class="ozet-satir">
+                    <span>Toplam Adet</span>
+                    <span id="ozet-toplam-adet">0</span>
+                </div>
+                <div class="ozet-ayrac"></div>
+                <div class="ozet-satir ozet-toplam">
+                    <span>ARA TOPLAM</span>
+                    <span id="ozet-toplam-tutar">₺0,00</span>
+                </div>
+                <div class="ozet-satir ozet-kar">
+                    <span>Tahmini Kâr</span>
+                    <span id="ozet-kar">₺0,00</span>
+                </div>
+            </div>
+
+            <button class="btn-temizle" onclick="sepetTemizle()">Sepeti Temizle</button>
+
+            <button class="btn-tamamla"
+                    id="btn-tamamla"
+                    onclick="satisiTamamla()">
+                ✓ SATIŞI TAMAMLA
+            </button>
+        </div>
+
+        <!-- Boş sepet mesajı -->
+        <div class="sepet-bos" id="sepet-bos">
+            <p class="sepet-bos-icon">🛒</p>
+            <p class="sepet-bos-mesaj">Sepet boş</p>
+            <p class="sepet-bos-alt">Sol taraftan ürün seçin</p>
+        </div>
+
+    </aside>
+
+</div><!-- /.satis-layout -->
+
+<!-- ══════════════════════════════════════
+     Başarı Modal
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="basari-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-baslik">
+    <div class="modal-icerik" id="modal-kutu">
+        <div class="modal-ikon">✅</div>
+        <h2 class="modal-baslik" id="modal-baslik">Satış Tamamlandı!</h2>
+        <div class="modal-detaylar">
+            <div class="modal-satir">
+                <span>Toplam Tutar</span>
+                <strong id="modal-tutar">₺0,00</strong>
+            </div>
+            <div class="modal-satir">
+                <span>Tahmini Kâr</span>
+                <strong id="modal-kar">₺0,00</strong>
+            </div>
+        </div>
+        <div class="modal-butonlar">
+            <button class="btn-modal-yeni" id="btn-yeni-satis" onclick="yeniSatis()">
+                🔄 Yeni Satış
+            </button>
+            <button class="btn-modal-dashboard" onclick="window.location='/dashboard'">
+                📊 Dashboard'a Dön
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/satis.js') }}"></script>
 {% endblock %}

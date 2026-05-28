@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if mod == "duzenle" %}Ürünü Düzenle{% else %}Yeni Ürün Ekle{% endif %}
+{% endblock %}
+
+{% block page_title %}
+    {% if mod == "duzenle" %}Ürün Düzenle{% else %}Yeni Ürün Ekle{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/urunler.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="form-page-wrapper">
+
+    <!-- Kart Başlığı -->
+    <div class="form-card">
+        <div class="form-card-header">
+            <span class="form-card-icon">{% if mod == "duzenle" %}🖋️{% else %}➕{% endif %}</span>
+            <div>
+                <h2 class="form-card-title">
+                    {% if mod == "duzenle" %}
+                        {{ urun.ad }} — Düzenle
+                    {% else %}
+                        Yeni Ürün Ekle
+                    {% endif %}
+                </h2>
+                <p class="form-card-subtitle">
+                    {% if mod == "duzenle" %}
+                        Ürün bilgilerini güncelleyin.
+                    {% else %}
+                        Stok takibine yeni bir ürün ekleyin.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form
+            id="urun-form"
+            method="POST"
+            action="{% if mod == 'duzenle' %}{{ url_for('urun_duzenle', urun_id=urun.id) }}{% else %}{{ url_for('urun_ekle') }}{% endif %}"
+            novalidate
+        >
+            <!-- Ürün Adı -->
+            <div class="form-group">
+                <label for="urun-adi" class="form-label">Ürün Adı <span class="required">*</span></label>
+                <input
+                    type="text"
+                    id="urun-adi"
+                    name="ad"
+                    class="form-input"
+                    placeholder="Örn: Su 0.5L"
+                    value="{{ form_data.get('ad', '') }}"
+                    required
+                    autofocus
+                    maxlength="200"
+                >
+            </div>
+
+            <!-- Kategori -->
+            <div class="form-group">
+                <label for="urun-kategori" class="form-label">Kategori <span class="required">*</span></label>
+                <select id="urun-kategori" name="kategori_id" class="form-input" required>
+                    <option value="">— Kategori seçin —</option>
+                    {% for kat in kategoriler %}
+                    <option value="{{ kat.id }}"
+                        {% if form_data.get('kategori_id') == kat.id %}selected{% endif %}>
+                        {{ kat.ad }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Fiyatlar (yan yana) -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="alis-fiyati" class="form-label">Alış Fiyatı (₺) <span class="required">*</span></label>
+                    <div class="input-prefix-wrapper">
+                        <span class="input-prefix">₺</span>
+                        <input
+                            type="number"
+                            id="alis-fiyati"
+                            name="alis_fiyati"
+                            class="form-input input-with-prefix"
+                            placeholder="0.00"
+                            value="{{ form_data.get('alis_fiyati', '') }}"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="satis-fiyati" class="form-label">Satış Fiyatı (₺) <span class="required">*</span></label>
+                    <div class="input-prefix-wrapper">
+                        <span class="input-prefix">₺</span>
+                        <input
+                            type="number"
+                            id="satis-fiyati"
+                            name="satis_fiyati"
+                            class="form-input input-with-prefix"
+                            placeholder="0.00"
+                            value="{{ form_data.get('satis_fiyati', '') }}"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stok (yan yana) -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="stok-miktari" class="form-label">Stok Miktarı <span class="required">*</span></label>
+                    <input
+                        type="number"
+                        id="stok-miktari"
+                        name="stok_miktari"
+                        class="form-input"
+                        placeholder="0"
+                        value="{{ form_data.get('stok_miktari', '') }}"
+                        min="0"
+                        step="1"
+                        required
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="kritik-stok" class="form-label">Kritik Stok Seviyesi</label>
+                    <input
+                        type="number"
+                        id="kritik-stok"
+                        name="kritik_stok_seviyesi"
+                        class="form-input"
+                        placeholder="5"
+                        value="{{ form_data.get('kritik_stok_seviyesi', 5) }}"
+                        min="1"
+                        step="1"
+                    >
+                    <span class="form-hint">⚠️ Stok bu seviyeye düştüğünde uyarı alacaksın.</span>
+                </div>
+            </div>
+
+            <!-- Butonlar -->
+            <div class="form-actions">
+                <a href="{{ url_for('urunler') }}" class="btn btn-secondary" id="btn-iptal">
+                    ← İptal
+                </a>
+                <button type="submit" class="btn btn-primary" id="btn-kaydet">
+                    {% if mod == "duzenle" %}💾 Güncelle{% else %}✅ Kaydet{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,11 +1,232 @@
 {% extends "base.html" %}
+
 {% block title %}Raporlar{% endblock %}
-{% block page_title %}Raporlar{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/raporlar.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="page-placeholder">
-    <span class="placeholder-icon">📊</span>
-    <h2>Raporlar</h2>
-    <p>Bu sayfa yakında aktif olacak.</p>
-    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Dashboard'a Dön</a>
+<div class="page-header">
+    <h1 class="page-title">📊 Raporlar ve Analizler</h1>
+    <p class="page-subtitle">Son 30 günlük satış performansınız ve trendler</p>
 </div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in messages %}
+  <div class="alert alert-{{ cat }}">{{ msg }}</div>
+  {% endfor %}
+{% endwith %}
+
+<!-- ÖZET KARTLAR (4'lü Grid) -->
+<div class="rapor-grid">
+    <!-- Kart 1: Toplam Satış -->
+    <div class="rapor-card stat-card" style="border-top: 4px solid #2C5F2D;">
+        <div class="stat-icon" style="background: #E8F5E9; color: #2C5F2D;">📈</div>
+        <div class="stat-info">
+            <p class="stat-baslik">Toplam Satış (30 Gün)</p>
+            <h2 class="stat-deger" style="color: #2C5F2D;">₺{{ "%.2f"|format(toplam_satis_tutari) }}</h2>
+            <p class="stat-alt">{{ satis_adedi }} işlem</p>
+        </div>
+    </div>
+
+    <!-- Kart 2: Toplam Kâr -->
+    <div class="rapor-card stat-card" style="border-top: 4px solid #2ECC71;">
+        <div class="stat-icon" style="background: #E8F8F5; color: #2ECC71;">💰</div>
+        <div class="stat-info">
+            <p class="stat-baslik">Toplam Kâr (30 Gün)</p>
+            <h2 class="stat-deger" style="color: #2ECC71;">₺{{ "%.2f"|format(toplam_kar) }}</h2>
+            <p class="stat-alt">Son 30 gün</p>
+        </div>
+    </div>
+
+    <!-- Kart 3: Ortalama Satış -->
+    <div class="rapor-card stat-card" style="border-top: 4px solid #028090;">
+        <div class="stat-icon" style="background: #E0F2F1; color: #028090;">📊</div>
+        <div class="stat-info">
+            <p class="stat-baslik">Ortalama Satış</p>
+            <h2 class="stat-deger" style="color: #028090;">₺{{ "%.2f"|format(ortalama_satis_tutari) }}</h2>
+            <p class="stat-alt">İşlem başına</p>
+        </div>
+    </div>
+
+    <!-- Kart 4: Bu Ay Kâr -->
+    <div class="rapor-card stat-card" style="border-top: 4px solid #1C7293;">
+        <div class="stat-icon" style="background: #E1F5FE; color: #1C7293;">🏆</div>
+        <div class="stat-info">
+            <p class="stat-baslik">Bu Ay Kâr</p>
+            <h2 class="stat-deger" style="color: #1C7293;">₺{{ "%.2f"|format(bu_ay_kar) }}</h2>
+            <p class="stat-alt">Bu ay toplam</p>
+        </div>
+    </div>
+</div>
+
+<!-- GRAFİK BÖLÜMÜ -->
+<div class="grafik-container">
+    <h2 class="section-title">📈 Günlük Satış Trendi (Son 14 Gün)</h2>
+    <div class="grafik-wrapper">
+        <div id="grafik-uyari" class="bos-durum" style="display: none;">
+            <p class="bos-icon">📉</p>
+            <p>Son 14 günde henüz satış verisi yok.</p>
+        </div>
+        <canvas id="satisGrafigi"></canvas>
+    </div>
+</div>
+
+<!-- ALT 2 SÜTUN -->
+<div class="iki-sutun">
+    
+    <!-- SOL: EN ÇOK SATAN ÜRÜNLER -->
+    <div class="rapor-card">
+        <h2 class="section-title">🏆 En Çok Satan Ürünler (Son 30 Gün)</h2>
+        {% if en_cok_satan %}
+            {% set max_adet = en_cok_satan[0].adet %}
+            <div class="en-cok-satan-liste">
+                {% for u in en_cok_satan %}
+                {% set yuzde = (u.adet / max_adet * 100) if max_adet > 0 else 0 %}
+                <div class="en-cok-satan-item">
+                    <div class="item-ust">
+                        <span class="urun-ad"><strong>{{ loop.index }}.</strong> {{ u.ad }}</span>
+                        <span class="urun-fiyat">₺{{ "%.2f"|format(u.tutar) }}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: {{ yuzde }}%;"></div>
+                    </div>
+                    <div class="item-alt">
+                        <span class="urun-oran">%{{ "%.0f"|format(yuzde) }}</span>
+                        <span class="urun-adet">{{ u.adet }} adet satıldı</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bos-durum-kucuk">
+                <p>Henüz satış yapılmadı.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- SAĞ: KATEGORİ BAZLI SATIŞ -->
+    <div class="rapor-card">
+        <h2 class="section-title">🗂️ Kategori Bazlı Satış (Son 30 Gün)</h2>
+        {% if kategori_bazli %}
+            {% set max_kat_tutar = kategori_bazli[0].tutar %}
+            <div class="kategori-liste">
+                {% for k in kategori_bazli %}
+                {% set kat_yuzde = (k.tutar / toplam_satis_tutari * 100) if toplam_satis_tutari > 0 else 0 %}
+                <div class="kategori-item">
+                    <div class="kat-sol">
+                        <span class="kat-badge">{{ k.ad }}</span>
+                        <div class="kat-progress-container">
+                            <div class="kat-progress-fill" style="width: {{ kat_yuzde }}%;"></div>
+                        </div>
+                    </div>
+                    <div class="kat-sag">
+                        <span class="kat-tutar">₺{{ "%.2f"|format(k.tutar) }}</span>
+                        <span class="kat-adet">{{ k.adet }} adet</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bos-durum-kucuk">
+                <p>Henüz satış yapılmadı.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% if gunluk_satis_grafigi %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById('satisGrafigi');
+    if (!ctx) return;
+    
+    // Verileri Jinja'dan JS'e aktar
+    const grafikVerisi = {{ gunluk_satis_grafigi | tojson | safe }};
+    
+    const tumSifir = grafikVerisi.every(g => parseFloat(g.tutar) === 0);
+    if (tumSifir) {
+        document.getElementById('satisGrafigi').style.display = 'none';
+        document.getElementById('grafik-uyari').style.display = 'flex';
+        return;
+    }
+    
+    const labels = grafikVerisi.map(g => g.tarih);
+    const data = grafikVerisi.map(g => parseFloat(g.tutar) || 0);
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Günlük Satış (₺)',
+                data: data,
+                borderColor: '#2C5F2D',
+                backgroundColor: 'rgba(44, 95, 45, 0.1)',
+                borderWidth: 3,
+                pointBackgroundColor: '#2C5F2D',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: '#2C5F2D',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.3 // Çizgi yumuşatma
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleFont: { size: 13, family: "'Inter', sans-serif" },
+                    bodyFont: { size: 14, weight: 'bold', family: "'Inter', sans-serif" },
+                    padding: 12,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return '₺' + context.parsed.y.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#f0f0f0',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return '₺' + value;
+                        },
+                        font: { family: "'Inter', sans-serif" }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: { family: "'Inter', sans-serif" }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endif %}
 {% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Sayfa Bulunamadı - 404{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 100px 20px;">
+    <h1 style="font-size: 6rem; color: #2C5F2D; margin: 0;">404</h1>
+    <h2 style="font-size: 2rem; color: #333; margin-top: 10px;">Sayfa Bulunamadı</h2>
+    <p style="color: #666; margin-bottom: 30px; font-size: 1.1rem;">
+        Aradığınız sayfa silinmiş, adı değiştirilmiş veya geçici olarak kullanılamıyor olabilir.
+    </p>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-primary" style="padding: 12px 24px; font-size: 1.1rem;">
+        🏠 Ana Sayfaya Dön
+    </a>
+</div>
+{% endblock %}

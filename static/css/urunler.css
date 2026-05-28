@@ -1,0 +1,366 @@
+/* ═══════════════════════════════════════════════════
+   urunler.css — Ürün Yönetimi Sayfasına Özel Stiller
+   ═══════════════════════════════════════════════════ */
+
+/* ── Sayfa Üst Başlık ── */
+.urunler-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.page-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.table-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.urun-sayisi {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.btn-yeni-urun {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+}
+
+.btn-yeni-urun:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(44, 95, 45, 0.35);
+}
+
+/* ── Filtre Çubuğu ── */
+.filter-bar {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.filter-input:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.12);
+}
+
+.filter-select {
+    padding: 0.6rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    outline: none;
+    cursor: pointer;
+    transition: border-color var(--transition);
+    min-width: 180px;
+}
+
+.filter-select:focus {
+    border-color: var(--brand);
+}
+
+/* ── Ürün Tablosu ── */
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-card);
+    font-size: 0.88rem;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.product-table thead th {
+    background: var(--brand);
+    color: #fff;
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.product-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background var(--transition);
+}
+
+.product-table tbody tr:last-child { border-bottom: none; }
+.product-table tbody td { padding: 0.8rem 1rem; vertical-align: middle; }
+
+/* Kritik stok satırı — çok hafif pembe */
+.table-row-critical {
+    background: #fef2f2 !important;
+}
+.table-row-critical:hover { background: #fde8e8 !important; }
+
+/* Tükenmiş ürün satırı */
+.table-row-empty { opacity: 0.65; }
+.table-row-empty .urun-adi { color: var(--text-muted); }
+
+/* Normal hover */
+.product-table tbody tr:not(.table-row-critical):not(.table-row-empty):hover {
+    background: #f9fafb;
+}
+
+/* ── Hücre Stilleri ── */
+.urun-adi { font-weight: 600; color: var(--text-primary); }
+
+.fiyat-hucre {
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.satis-fiyat { color: var(--brand); font-weight: 700; }
+
+.kar-hucre { text-align: center; }
+
+.kar-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+.kar-iyi   { background: #d4f4e2; color: #1b7a46; }
+.kar-orta  { background: #fef9c3; color: #92600a; }
+.kar-dusuk { background: #fee2e2; color: #991b1b; }
+
+.stok-hucre { white-space: nowrap; font-weight: 500; }
+.stok-sifir { color: var(--text-muted); }
+.stok-kritik { color: var(--danger); font-weight: 700; }
+
+/* ── Durum Badge'leri ── */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 99px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.badge-success  { background: #d4f4e2; color: #1b7a46; }
+.badge-warning  { background: #fef3c7; color: #92600a; }
+.badge-danger   { background: #fee2e2; color: #991b1b; }
+.badge-kategori {
+    background: #f1f5f9;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.78rem;
+}
+
+/* ── İşlem Butonları ── */
+.islem-hucre {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    transition: background var(--transition), transform var(--transition);
+    text-decoration: none;
+}
+
+.icon-edit:hover  { background: #dbeafe; transform: scale(1.1); }
+.icon-delete:hover { background: #fee2e2; transform: scale(1.1); }
+
+.sil-form { display: inline; margin: 0; padding: 0; }
+
+/* Filtrede bulunamadı mesajı */
+.no-results {
+    text-align: center;
+    padding: 2.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+}
+
+/* ── Boş Durum ── */
+.empty-state-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 5rem 2rem;
+    text-align: center;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-secondary);
+}
+
+.empty-icon { font-size: 3.5rem; }
+.empty-state-box h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); }
+.empty-state-box p  { font-size: 0.9rem; color: var(--text-muted); }
+
+/* ════════════════════════════════════════════════════
+   FORM SAYFASI (urun_form.html)
+   ════════════════════════════════════════════════════ */
+.form-page-wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.form-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+    color: #fff;
+}
+
+.form-card-icon { font-size: 2rem; line-height: 1; }
+
+.form-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.2rem;
+}
+
+.form-card-subtitle {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.75);
+}
+
+/* Form içi padding */
+.form-card .form-group,
+.form-card .form-row,
+.form-card .form-actions {
+    padding: 0 2rem;
+}
+
+.form-card .form-group:first-of-type { padding-top: 1.75rem; }
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-hint {
+    display: block;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}
+
+/* ₺ prefix input */
+.input-prefix-wrapper {
+    position: relative;
+}
+
+.input-prefix {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    color: var(--brand);
+    font-size: 0.95rem;
+    pointer-events: none;
+}
+
+.input-with-prefix {
+    padding-left: 2rem;
+}
+
+/* Zorunlu alan yıldızı */
+.required { color: var(--danger); margin-left: 2px; }
+
+/* İptal ve Kaydet butonları */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1.5rem;
+}
+
+.btn-secondary {
+    background: var(--bg);
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border);
+}
+.btn-secondary:hover {
+    background: var(--border);
+    color: var(--text-primary);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .filter-bar { flex-direction: column; }
+    .filter-input, .filter-select { width: 100%; min-width: unset; }
+
+    .product-table { font-size: 0.78rem; }
+    .product-table thead th,
+    .product-table tbody td { padding: 0.65rem 0.6rem; }
+
+    .form-row { grid-template-columns: 1fr; }
+
+    .form-card .form-group,
+    .form-card .form-row,
+    .form-card .form-actions { padding: 0 1.25rem; }
+
+    .page-header { flex-direction: column; align-items: flex-start; }
+}

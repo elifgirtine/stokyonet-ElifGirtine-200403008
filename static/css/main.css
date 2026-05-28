@@ -492,6 +492,52 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
     box-shadow: var(--shadow-sm);
 }
 
+.kritik-stok-tablo {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.kritik-stok-tablo thead th {
+    background: var(--brand);
+    color: #fff;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.kritik-stok-tablo tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background var(--transition);
+}
+
+.kritik-stok-tablo tbody tr:hover { background: #fdf2f2; }
+.kritik-stok-tablo tbody td { padding: 0.75rem 1rem; }
+
+.stok-sayi { font-weight: 700; text-align: center; }
+.stok-sayi.kritik { color: var(--danger); }
+
+/* Stat kart — kritik stok var ise kırmızı vurgu */
+.stat-kritik-aktif {
+    border-color: var(--danger);
+    background: #fff5f5;
+}
+
+.stat-kritik-aktif .stat-value { color: var(--danger); }
+
+/* Küçük alt bilgi (ör: satış tutarı) */
+.stat-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
+
+/* Başarılı boş durum */
+.succes-state { color: var(--success) !important; font-weight: 600; }
+
 /* ── Genel Badge ── */
 .badge-kritik {
     display: inline-block;
