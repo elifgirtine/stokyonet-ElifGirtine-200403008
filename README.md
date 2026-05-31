@@ -7,23 +7,50 @@ Küçük işletmeler için geliştirilmiş, Flask + Firebase Firestore tabanlı 
 ## 🚀 Hızlı Başlangıç
 
 ### Gereksinimler
-- Python 3.9+
+- Python 3.10 ([python.org](https://python.org/downloads))
+  ⚠️ Windows kurulumunda **"Add Python to PATH"** kutusunu işaretle!
+- Git ([git-scm.com](https://git-scm.com/downloads))
 - Firebase servis hesabı JSON dosyası
 
-### Kurulum (Tek Komut)
+### Kurulum
+
+#### Windows
 ```bash
+git clone https://github.com/elifgirtine/stokyonet-ElifGirtine-200403008.git
+cd stokyonet-ElifGirtine-200403008
+python -m venv venv
+venv\Scripts\activate
 python kurulum.py
 ```
 
-Kurulum scripti tüm adımları otomatik halleder.
-Sadece Firebase JSON dosyanızın yolunu girmeniz yeterli.
+#### macOS / Linux
+```bash
+git clone https://github.com/elifgirtine/stokyonet-ElifGirtine-200403008.git
+cd stokyonet-ElifGirtine-200403008
+python3 -m venv venv
+source venv/bin/activate
+python3 kurulum.py
+```
 
 ### Uygulamayı Başlat
+
+#### Windows (Kolay Yol)
+`baslat.bat` dosyasına çift tıkla
+
+#### Windows (Terminal)
 ```bash
 python app.py
 ```
 
-Tarayıcıda açın: http://localhost:5001
+#### macOS / Linux (Kolay Yol)
+`./baslat.sh`
+
+#### macOS / Linux (Terminal)
+```bash
+python3 app.py
+```
+
+**Tarayıcıda açın:** http://localhost:5001
 
 **Varsayılan Giriş:** admin / Admin123!
 

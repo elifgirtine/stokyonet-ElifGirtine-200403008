@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Küçük İşletme Stok ve Gelir Yönetimi Sistemi
 Ana Flask uygulama dosyası.

@@ -1,12 +1,20 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import subprocess
 import shutil
+import platform
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def main():
+    if sys.platform == "win32":
+        import io
+        sys.stdout = io.TextIOWrapper(
+            sys.stdout.buffer, encoding='utf-8', errors='replace'
+        )
+
     clear_screen()
     print("🚀 StokYönet - Otomatik Kurulum")
     print("================================")
@@ -84,7 +92,12 @@ FIREBASE_CREDENTIALS_PATH=./serviceAccountKey.json
     print("✅ Kurulum tamamlandı!")
     print("")
     print("Uygulamayı başlatmak için:")
-    print("  python app.py")
+    if platform.system() == "Windows":
+        print("  venv\\Scripts\\activate")
+        print("  python app.py")
+    else:
+        print("  source venv/bin/activate")
+        print("  python3 app.py")
     print("")
     print("Tarayıcıda açın:")
     print("  http://localhost:5001")
